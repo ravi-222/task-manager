@@ -8,7 +8,7 @@ export function validate(schema: ZodType, field: RequestField = "body") {
   return (req: Request, _res: Response, next: NextFunction): void => {
     try {
       const parsed = schema.parse(req[field]);
-      (req as unknown as Record<string, unknown>)[field] = parsed;
+      Object.defineProperty(req, field, { value: parsed, writable: true, configurable: true, enumerable: true });
       next();
     } catch (error) {
       if (error instanceof ZodError) {
